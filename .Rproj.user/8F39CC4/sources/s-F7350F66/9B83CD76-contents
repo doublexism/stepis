@@ -1,34 +1,34 @@
-loadObj(fsdata, "data\\fsdata_1112.rds")
+loadObj(fsdata, "data/stroke_dat_1201.rds")
 ## stroke patients and controls
-stroke_data <- fsdata %>% dplyr::filter(!is.na(family_no_isstroke))
-write_excel_csv(stroke_data,"data\\stk_dat_1112_utf8.csv")
+# stroke_data <- fsdata %>% dplyr::filter(!is.na(family_no_isstroke))
+# write_excel_csv(stroke_data,"data\\stk_dat_1112_utf8.csv")
 ## get all SNPs
-SNP_names <- getSNPName(stroke_data)
+SNP_names <- getSNPName(fsdata)
 
 ## get Summary of the SNPs
 # allele frequency
 Al_Freq_table <- map_dfr(SNP_names, 
                          getAlleleFrequency, 
-                         data = stroke_data, 
+                         data = fsdata, 
                          drop.freq = FALSE)
-Al_Freq_table <- Al_Freq_table %>% select(rsid, A,T,G,C,A_N,T_N,G_N,C_N)
+Al_Freq_table <- Al_Freq_table %>% dplyr::select(rsid, A,T,G,C,A_N,T_N,G_N,C_N)
 write_excel_csv(Al_Freq_table, "results\\Allele_Freq.csv")
 # genotype frquency
-geno_freq_table <- map_dfr(SNP_names, genoFreq, data = stroke_data)
+geno_freq_table <- map_dfr(SNP_names, genoFreq, data = fsdata)
 write_excel_csv(geno_freq_table, "results\\genotype_Freq.csv")
 # chunk SNP with calling rate > 0.5
 SNP_keep <- getVariable(geno_freq_table, rsid, miss_freq < 0.5) %>% unique()
 SNP_remove <- setdiff(SNP_names, SNP_keep)
 
 ## remove imcomplete samples
-stroke_data <- stroke_data %>% 
-  select(-one_of(SNP_remove)) %>%
+fsdata <- fsdata %>% 
+  dplyr::select(-one_of(SNP_remove)) %>%
   mutate(call_num = rowSums(is.na(.[SNP_keep])))
-sample.delete <- stroke_data %>% 
-  filter(call_num > 100 |is.na(isfamily_no)|is.na(stroke_proven)|!stroke_proven %in% c(0,1))
+sample.delete <- fsdata %>% 
+  filter(call_num > 100 |is.null(isfamily_no)|is.na(stroke_proven)|!stroke_proven %in% c(0,1))
 
 ## delete incompete families
-stk_dat_comp <- stroke_data %>% 
+stk_dat_comp <- fsdata %>% 
   dplyr::filter(! pid %in% sample.delete$pid) %>%
   # fix erronous coding
   filter(!family_no %in% c("1404113","1218") & !pid %in% c("3703", "142110704","142110705","170911702","170911703")) %>%
@@ -46,7 +46,7 @@ stk_dat_comp <- stroke_data %>%
          n_fam = n()) %>%
   filter(n_fam >= 2 & proband != 99) %>%
     # delete unrelated variables
-  select(-id_aff,-proband, -proband_err, -n_fam) %>%
+  dplyr::select(-id_aff,-proband, -proband_err, -n_fam) %>%
   ungroup()
 
 # genotype freq after remove
@@ -61,5 +61,5 @@ stk_dat_comp <- addPid(stk_dat_comp, pid = pid, famid = family_no, memid = memid
 loadObj(stk_dat_comp, "data\\stk_dat.rds")
 
 ## output to data
-write_rds(stk_dat_comp,"data\\stk_dat.rds")
-write_csv(stk_dat_comp,"data\\stk_dat_1114_utf8.csv")
+write_rds(stk_dat_comp,"data/stk_dat.rds")
+

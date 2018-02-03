@@ -1,6 +1,5 @@
 ## functions
 library(genetics)
-library(tidyverse)
 ## get AlleleFrequency from a column of snps
 getAlleleFrequency <- function(SNP,data,drop.freq=TRUE){
   Alleles <- data[[SNP]]
@@ -41,8 +40,8 @@ genoFreq <- function(SNP, data){
   } else {
     geno_freq <- tibble(genotype=NA,Count = 0)
   }
-  geno_freq <- geno_freq %>% mutate(rsid = SNP,freq = Count/sum(Count),miss_N = N-sum(Count), miss_freq = round((N - sum(Count))/N,3))
-  geno_freq <- geno_freq %>% dplyr::select(rsid,genotype,Count, freq,miss_N, miss_freq)
+  geno_freq <- geno_freq %>% mutate(rsid = SNP, miss_freq = round((N - sum(Count))/N,3))
+  geno_freq <- geno_freq %>% select(rsid,genotype,miss_freq)
   return(geno_freq)
 }
 

@@ -1,0 +1,113 @@
+library(dplyr)
+library(httr)
+library(xml2)
+#function
+#translate NULL to NA
+NULL.to.NA <- function(x){
+  if(!is.null(x)){
+    return(x)
+  }
+  else{
+    return(NA)
+  }
+}
+#extract allele information
+popMAF <- function(i,results,pop, KG=TRUE){
+  
+  if(KG){
+  idx = (grepl(paste0(pop,"$"),results$populations[[i]]$population) & 
+        grepl("1000GENOMES",results$populations[[i]]$population))
+  }
+  else{
+  idx = (grepl(paste0(pop,"$"),results$populations[[i]]$population) & 
+         grepl("HAPMAP",results$populations[[i]]$population))
+  }
+  if (length(idx)!=0){
+  if(idx == 1) {
+  return( c(
+          results$populations[[i]]$frequency,
+          results$populations[[i]]$allele,
+          results$populations[[i]]$allele_count
+          ))
+  }
+  }
+  
+}
+#Function returning snp informations
+SNPinfo <- function(snpid,results,pop){
+  results <- results[[snpid]]
+  allele.info <- rep(NA,6)
+  len <- length(results$populations)
+  a <- lapply(1:len,popMAF, results=results, pop=pop,KG=TRUE)
+  #snp infomation
+  frequency <- unlist(Filter(Negate(is.null),a))
+  n <- length(frequency)
+  if(n==0){
+    print(paste0(snpid," Not in 1000 Genome, use hapmap instead"))
+    a <- lapply(1:len,popMAF, results=results, pop=pop, KG=FALSE)
+    frequency <- unlist(Filter(Negate(is.null),a))
+    n <- length(frequency)
+    if(n==0){
+      print("allele frequency not found")
+    }
+    else{
+      allele.info[1:n] <- frequency
+    }
+  }
+  else{
+  allele.info[1:n] <- frequency
+  }
+  if(is.null(allele.info)) {
+  print(paste0(snpid," not found"))  
+  }
+  #other informations
+  snp.info <- as.data.frame(t(c(NULL.to.NA(results$name), 
+                pop, 
+                allele.info,
+                NULL.to.NA(results$mapping[[1]]$seq_region_name),
+                NULL.to.NA(results$mapping[[1]]$start),
+                NULL.to.NA(results$ancestral_allele), 
+                NULL.to.NA(results$most_severe_consequence))))
+  if(length(snp.info)<12) {
+    print(snp.info)
+    return(snp.info)}
+  else{
+  colnames(snp.info) <- c("SNP","population",
+                          "allele1_freq",
+                          "allele1_type",
+                          "allele1_count",
+                          "allele2_freq",
+                          "allele2_type",
+                          "allele2_count",
+                          "chromesome",
+                          "site",
+                          "ancestral_allele",
+                          "most_severe_consequence")
+  
+  }
+  return(snp.info)
+}
+
+#function to fetch Allele information from a character vector or list
+Get.SNPinfo <- function(snp.list,pop){
+  options(warn = -1)
+  server <- "http://grch37.rest.ensembl.org"
+  ext <- "/variation/homo_sapiens?pops=1"
+  header <- c("Content-Type"="application/json",accept="application/json")
+  data <- list(ids=snp.list)
+  print("querying...")
+  response <- POST(url=paste0(server,ext),
+                   add_headers("Content-Type"="application/json",Accept="application/json"),
+                   body=data,
+                   encode="json")
+  if(response$status_code == 200)
+  {
+  results.snps <- content(response)
+  print("Query success, extracting information...")
+  results <- lapply(snp.list,SNPinfo,results = results.snps, pop=pop)
+  return(bind_rows(results))
+  }
+  else{
+    print("Query fail, please check internet connection and retry.")
+  }
+}
