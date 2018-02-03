@@ -1,3 +1,5 @@
+## sourcing external scripts
+source("scripts\\external scripts\\HWEtesterror.R")
 ## functions
 library(genetics)
 ## get AlleleFrequency from a column of snps
