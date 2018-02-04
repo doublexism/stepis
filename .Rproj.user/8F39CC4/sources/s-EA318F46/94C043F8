@@ -1,21 +1,21 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1517646146634.000,
+    "created" : 1517735176543.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "130861816",
-    "id" : "9B83CD76",
-    "lastKnownWriteTime" : 1517661639,
-    "last_content_update" : 1517661639840,
+    "hash" : "0",
+    "id" : "94C043F8",
+    "lastKnownWriteTime" : 1517734650,
+    "last_content_update" : 1517734650,
     "path" : "~/Documents/GitHub/stepis/scripts/2 prepare data based on family level.R",
     "project_path" : "scripts/2 prepare data based on family level.R",
     "properties" : {
-        "cursorPosition" : "64,0",
-        "scrollLine" : "45"
+        "cursorPosition" : "22,0",
+        "scrollLine" : "14"
     },
-    "relative_order" : 1,
+    "relative_order" : 2,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

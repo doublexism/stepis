@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1517736032307.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "62F08C4A",
+    "lastKnownWriteTime" : 1517645214,
+    "last_content_update" : 1517645214,
+    "path" : "~/Documents/GitHub/stepis/scripts/get MAF of all snps.R",
+    "project_path" : "scripts/get MAF of all snps.R",
+    "properties" : {
+        "cursorPosition" : "15,42",
+        "scrollLine" : "5"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

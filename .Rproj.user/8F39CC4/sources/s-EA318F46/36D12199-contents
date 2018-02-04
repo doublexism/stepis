@@ -1,4 +1,4 @@
-﻿rsid,genotype,Count,freq,miss_N,miss_freq
+rsid,genotype,Count,freq,miss_N,miss_freq
 rs180058,C:C,92,0.3898305084745763,2148,0.901
 rs180058,C:T,98,0.4152542372881356,2148,0.901
 rs180058,T:T,46,0.19491525423728814,2148,0.901

@@ -32,14 +32,14 @@ getAlleleFrequency <- function(SNP,data,drop.freq=TRUE){
 }
 
 ## get genotype frequency
-genoFreq <- function(SNP, data){
+genoFreq <- function(SNP, data, Byvar){
   genotypes <- unique(data[[SNP]])
-  geno_freq <- table(data[[SNP]]) %>% as_tibble()
+  geno_freq <- table(data[[SNP]], data[[Byvar]]) %>% as_tibble()
   N <- nrow(data)
   if (nrow(geno_freq) != 0){
-  colnames(geno_freq) <- c("genotype","Count")
+  colnames(geno_freq) <- c("genotype","affect_status","Count")
   } else {
-    geno_freq <- tibble(genotype=NA,Count = 0)
+    geno_freq <- tibble(genotype=NA,affect_status = NA,Count = 0)
   }
   geno_freq <- geno_freq %>% mutate(rsid = SNP,freq = Count/sum(Count),miss_N = N-sum(Count), miss_freq = round((N - sum(Count))/N,3))
   geno_freq <- geno_freq %>% dplyr::select(rsid,genotype,Count, freq,miss_N, miss_freq)

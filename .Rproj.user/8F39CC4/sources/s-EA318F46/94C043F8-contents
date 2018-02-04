@@ -1,4 +1,10 @@
 loadObj(fsdata, "data/stroke_dat_1201.rds")
+## diagnose hyperlipidemia and centric obesity
+fsdata <- fsdata %>% mutate( 
+     hyperlipidemia = (hislipodemia == 1)|(tc >= 6.22)|(tg >= 2.26)|(hdlc < 1.04)|(ldlc >= 4.14),
+     cobesity = (sex == 1 & waist >90)|(sex == 0) & waist > 85) 
+write_rds(fsdata, "data/stroke_dat_0204.rds")
+
 ## stroke patients and controls
 # stroke_data <- fsdata %>% dplyr::filter(!is.na(family_no_isstroke))
 # write_excel_csv(stroke_data,"data\\stk_dat_1112_utf8.csv")
@@ -57,8 +63,12 @@ M <- map_dfc(stk_dat_comp[SNP_keep], geno_mat) %>% as.matrix()
 
 ## add parentid to data
 stk_dat_comp <- addPid(stk_dat_comp, pid = pid, famid = family_no, memid = memid)
-## diagnose hypertension and diabetes
-loadObj(stk_dat_comp, "data\\stk_dat.rds")
+
+
+
+
+
+
 
 ## output to data
 write_rds(stk_dat_comp,"data/stk_dat.rds")
