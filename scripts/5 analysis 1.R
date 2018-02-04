@@ -6,7 +6,8 @@ fsdata_summary <- setDT(fsdata)[,.(sib_num = sum(memid %in% c(1,4,5,6,7,8,9)),
                             fa_num = sum(memid == 2), 
                             mo_num = sum(memid == 3)), family_no][,.(sib_num,fa_num,mo_num,pa_num = fa_num+mo_num)]
 
-table1 <- fsdata_summary[,.(sum_pop = count(1), sum_pa = sum(fa_num), sum_mo = sum(mo_num), sum_pa(pa_num ==2)), sib_num]
+table1 <- fsdata_summary[,.(sum_pop = .N, sum_fa = sum(fa_num), sum_mo = sum(mo_num), sum_pa = sum(pa_num ==2)), sib_num] %>%
+  arrange(sib_num)
 ## association test
 
 # conditional logistic regression

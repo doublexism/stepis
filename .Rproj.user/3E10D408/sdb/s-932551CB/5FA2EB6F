@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "loadObj(stk_dat, \"data/stk_dat.rds\")\nloadObj(fsdata,\"data/stroke_dat_1201.rds\")\nlibrary(data.table)\n## discriptive family information\nfsdata_summary <- setDT(fsdata)[,.(sib_num = sum(memid %in% c(1,4,5,6,7,8,9)), \n                            fa_num = sum(memid == 2), \n                            mo_num = sum(memid == 3)), family_no][,.(sib_num,fa_num,mo_num,pa_num = fa_num+mo_num)]\n\ntable1 <- fsdata_summary[,.(sum_pop = .N, sum_fa = sum(fa_num), sum_mo = sum(mo_num), sum_pa = sum(pa_num ==2)), sib_num] %>%\n  arrange(sib_num)\n## association test\n\n# conditional logistic regression\nsnps <- colnames(stk_dat) %>% str_subset(\"^rs\")\nstk_add <- map(stk_dat[snp], )\ncor_mat <- cor(stk_dat[snps])\n\nlibrary(survival)\nclogit(is_stroke ~ rs2043211 + strata(fid), data = stk_dat,method = \"exact\") %>% summary()\n\n",
+    "created" : 1517670948163.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2282772301",
+    "id" : "5FA2EB6F",
+    "lastKnownWriteTime" : 1517674343,
+    "last_content_update" : 1517674343234,
+    "path" : "C:/Users/doublex/Desktop/fsdata/stepis/scripts/5 analysis 1.R",
+    "project_path" : "scripts/5 analysis 1.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
